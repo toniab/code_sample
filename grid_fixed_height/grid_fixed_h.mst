@@ -1,0 +1,13 @@
+{{# image_rows }}
+<div class="grid_row">
+     {{# images }}
+      <div class="grid_image_container" style="width: {{ display_width }}px; height: {{ display_height }}px;">
+           <img class="grid_image {{# tall }} tall {{/ tall }}" src="{{ url }}">
+      </div>
+     {{/ images }}
+     <div class="clear"></div>
+</div>
+<div class="clear"></div>
+{{/ image_rows }}
+
+
