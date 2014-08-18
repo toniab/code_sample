@@ -1,0 +1,124 @@
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <style type="text/css">
+        body {
+            background: url("balloon-end.jpg");
+        } 
+    
+        .nav {
+            z-index: 1;
+        } 
+        
+        .title a {
+            color: #000;
+        }       
+    
+        .title a:hover {
+            color: #e08e90;
+        }   
+    
+        .preload_balloon {
+            background: url("balloon-long.gif");
+        }   
+    
+        .balloon {
+            display: block;
+            width: 200px;
+            height: 356px;
+            position: absolute;
+        }   
+    
+        #b1 {
+            top: -100px;
+            left: auto;
+            right: -280px;
+        }   
+    
+        #b2 {
+            top: 350px;
+            left: auto;
+            right: -220px;
+        }   
+    
+        #b3 {
+            top: 630px;
+            left: 25px;
+        }   
+    
+        #b4 {
+            top: 280px;
+            left: -250px;
+        }
+    
+        #b5 {
+            top: -160px;
+            left: -230px;
+        }      
+    </style>
+</head>
+
+<h1 style="padding-top: 20px;"><img alt="easy" src="easy-title.png" /></h1>
+<div id="container" style="width:auto;">
+    <p class="title">feat. <a href="http://marcelo-gutierrez.com/"  target="_blank">M A R C E L O</a></p>
+    
+    <div style="position:relative; width:600px; margin:30px auto 100px auto; text-align:center;">
+        <div class="preload_balloon"></div>
+        <img src="easy.jpg" />
+    
+        <img id="b1" class="balloon" src="balloon-still.jpg" />
+        <img id="b2" class="balloon" src="balloon-still.jpg" />
+        <img id="b3" class="balloon" src="balloon-still.jpg" />
+        <img id="b4" class="balloon" src="balloon-still.jpg" />
+        <img id="b5" class="balloon" src="balloon-still.jpg" />
+  
+    </div>
+    
+    <div style="width:500px;text-align:right; margin: 0 auto;">
+    creative : m a r c e l o & hawa<br />
+    photography : hawa<br />
+    model: m a r c e l o<br />
+    dev: tonia
+    </div>
+    
+    
+    <div class="clear" style="height:300px;"></div>
+    
+
+    
+</div>
+
+<script type="text/javascript">
+    var pop_counter = 0;
+    var pop_order = [0,4,1,5,2,3];
+    var num_balloons = $(".balloon").length;
+    
+    function pop_balloon() { 
+        var delay_time = (pop_counter == 0) ? 2000 : 5900;
+        // wait the length of the gif
+        
+        if (pop_counter <= num_balloons) {
+            // find current balloon
+            var $balloon = $("#b"+pop_order[pop_counter]);
+            
+            // replace balloon image with popping gif
+            if ($balloon.length) $balloon.attr("src","balloon-pop.gif");
+            
+            var popper = setTimeout(function(){
+                // after popping gif completes 1 cycle, replace with popped balloon
+                if ($balloon.length) $("#b"+pop_order[pop_counter]).attr("src","balloon-end.jpg");            
+                pop_counter++;
+                pop_balloon();
+            }, delay_time);
+        }
+    }   
+
+    $().ready(function() {
+        window.onload=function(){ 
+            setTimeout(function(){
+                pop_balloon();
+            }, 100);    
+        };      
+    });
+</script>
+
