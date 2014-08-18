@@ -4,7 +4,7 @@ code_sample
 Tonia codes!
 This repo contains proof Tonia can code.
 
-easy
+balloon popper
 ===========
 JS balloon-popping art installation from Konversation, my online gallery.
 
