@@ -7,23 +7,23 @@ TALL_IMAGE_RATIO = 2.5
 PAGINATION = False
 
 def new_row():
-    return {'row_images':[],
-            'row_height':0}
+    return {'images':[],
+            'height':0}
 
-def calc_init_display_dims(image):
+def calc_image_display_dims(image):
     #Assumes we know the width and height of each image
-    full_width = image['width'] 
-    full_height = image['height']
-    
+    image_w = image['width']
+    image_h = image['height']
+
     #Special case: handle disproprotionately tall images that look bad resized.
-    if float(height) / float(width) > TALL_IMAGE_RATIO:
-        full_height = INITIAL_HEIGHT #unset the height
+    if float(image_h) / float(image_w) > TALL_IMAGE_RATIO:
+        image_h = INITIAL_HEIGHT #unset the height
         image['tall'] = True
         #CSS will resize width only and crop height.
 
     image['display_height'] = INITIAL_HEIGHT
     #if we shrink image to grid row's height, decide how much width the image will take up.
-    image['display_width'] = int(round((float(width) * float(INITIAL_HEIGHT)) / float(height)))
+    image['display_width'] = int(round((float(image_w) * float(INITIAL_HEIGHT)) / float(image_h)))
     image['display_padded_width'] = image['display_width'] + (MARGIN * 2)
     return
 
@@ -31,10 +31,10 @@ def calc_row_height(row_width, row, image):
     num_row_images = len(row['images'])
 
     row_has_room_now = True
-    num_row_images_inclusive = num_images + 1
+    num_row_images_inclusive = num_row_images + 1
     overflow = (row_width + image['display_padded_width']) - GRID_WIDTH
     # Margin does not stretch, so use total width excluding margin to scale images
-    unpadded_row_width = GRID_WIDTH - MARGIN * 2 * num_images_including
+    unpadded_row_width = GRID_WIDTH - MARGIN * 2 * num_row_images_inclusive
     # Calculate what row height would need to be to include the new image
     necessary_height = int(round(float(unpadded_row_width * INITIAL_HEIGHT) / float(unpadded_row_width + overflow)))
 
@@ -52,7 +52,7 @@ def finalize_row(row):
     #sets final image display dimensions to match final row height.
     final_row_height = row['height']
     total_width = 0
-    
+
     for image in row['images']:
         image['display_width'] = int(round(float(final_row_height * image['display_width']) / float(image['display_height'])))
         image['display_height'] = final_row_height
@@ -68,18 +68,14 @@ def finalize_row(row):
         for row_image in row['images'][:abs(overflow)]:
             row_image['display_width'] += polarity
 
-def build_grid_rows(image_ids, images):
+def build_grid_rows(images):
     rows = []
     row = new_row()
     row_width = 0
 
-    for image_id in image_ids:
-        image = images[image_id]
+    for image in images:
 
         calc_image_display_dims(image)
-        
-        #set vars for state of current row
-        final_height = False # rename row finalized?
 
         #check if this image will overflow the row's width at current row height
         if row_width + image['display_padded_width'] < GRID_WIDTH:
@@ -96,7 +92,7 @@ def build_grid_rows(image_ids, images):
                 row = new_row()
                 row_width = 0
             else:
-                #end the current row as is, and start a new row with this image 
+                #end the current row as is, and start a new row with this image
                 finalize_row(row)
                 rows.append(row)
                 row = new_row()
@@ -106,7 +102,7 @@ def build_grid_rows(image_ids, images):
     #Say there's still room in current row, but we are out of images in this page to fill it.
     # If we are paginating, save them for the next page by passing back an offset.
     leftout_image_count = len(row['images'])
-    
+
     #if we aren't paginating or if there's no finalized rows yet it is the last page, and we should finalize the leftovers.
     if leftout_image_count and (not PAGINATION or not len(rows)):
         row['height'] = INITIAL_HEIGHT; #this case doesn't fill the full grid width to preserve image quality.
@@ -115,5 +111,7 @@ def build_grid_rows(image_ids, images):
         leftout_image_count = 0
 
     #TIP: if paginating, hold onto leftout_image_count so you can offset your next batch of images by that amount.
-    return rows, leftout_image_count
+
+    grid_data = {"image_rows": rows, "leftout_image_count": leftout_image_count}
+    return grid_data
 
