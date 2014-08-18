@@ -30,9 +30,10 @@ def calc_image_display_dims(image):
 def calc_row_height(row_width, row, image):
     num_row_images = len(row['images'])
 
-    row_has_room_now = True
+    row_has_room = True
     num_row_images_inclusive = num_row_images + 1
     overflow = (row_width + image['display_padded_width']) - GRID_WIDTH
+
     # Margin does not stretch, so use total width excluding margin to scale images
     unpadded_row_width = GRID_WIDTH - MARGIN * 2 * num_row_images_inclusive
     # Calculate what row height would need to be to include the new image
@@ -42,11 +43,11 @@ def calc_row_height(row_width, row, image):
     if necessary_height < MIN_ROW_HEIGHT and num_row_images:
         row_has_room = False
         overflow = GRID_WIDTH - row_width
-        unpadded_width = GRID_WIDTH - MARGIN * 2 * num_images
+        unpadded_width = GRID_WIDTH - MARGIN * 2 * num_row_images
         necessary_height = int(round(float(unpadded_width * INITIAL_HEIGHT) / float(unpadded_width - overflow)))
 
     row['height'] = necessary_height
-    return row_has_room_now
+    return row_has_room
 
 def finalize_row(row):
     #sets final image display dimensions to match final row height.
